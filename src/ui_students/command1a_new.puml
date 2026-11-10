@@ -1,0 +1,123 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+
+package swing {
+
+ActionListener -[hidden]right- JTextArea
+
+class JButton {
+    - text : String
+    + doClick()
+}
+
+note left of JButton::doClick {
+for (ActiveListener al : activeListeners)
+  al.actionPerformed(event)
+}
+
+interface ActionListener {
+    + {abstract} actionPerformed(av: ActionEvent)    
+}
+
+JButton *--right--> "*" ActionListener : actionListeners
+}
+
+class TableListener implements swing.ActionListener {
+    - idSale : int
+    - hasSale : boolean
+    - <color: red>newSaleListener : SaleListener</color>
+    - <color: red>payListener : PayListener</color>
+    - <color: red>statusPanel : StatusPanel</color>
+    + actionPerformed(av: ActionEvent)
+}
+
+class NewSaleListener implements swing.ActionListener {
+    - <color: red>pos : PointOfSale</color>
+    - <color: red>statusPanel : StatusPanel</color>
+    - <color: red>listenerCurrentTable : TableListener</color>
+    + actionPerformed(av: ActionEvent)
+}
+
+class ProductListener implements swing.ActionListener {
+    - <color: red>pos : PointOfSale</color>
+    - <color: red>statusPanel : StatusPanel</color>
+    - <color: red>listenerCurrentTable : TableListener</color>
+    - productName . String
+    + actionPerformed(av: ActionEvent)
+}
+
+class PrintReceiptListener implements swing.ActionListener {
+    - <color: red>pos : PointOfSale</color>
+    - <color: red>listenerCurrentTable : TableListener</color>
+    - <color: red>statusPanel : StatusPanel</color>
+    + actionPerformed(av: ActionEvent)
+}
+
+class PayListener implements swing.ActionListener {
+    - <color: red>pos : PointOfSale</color>
+    - <color: red>listenerCurrentTable : TableListener</color>
+    - <color: red>statusPanel : StatusPanel</color>
+    - <color: red>amountListener : AmountListener</color>
+    + actionPerformed(av: ActionEvent)
+}
+
+class AmountListener  implements swing.ActionListener {
+    - textField: swwing.JTextField
+    + getPaidAmount() : double
+    + actionPerformed(av: ActionEvent)    
+}
+
+note bottom of NewSaleListener {
+<color: red>listenerCurrentTableListener</color>
+  .setSaleId( <color: red>pos</color>.makeNewSale() );
+
+}
+
+note bottom of ProductListener {
+int id = <color: red>listenerCurrentTable</color>.getSaleId();
+<color: red>pos</color>.addLineItem(id, productName, 1);
+}
+
+note bottom of PrintReceiptListener {
+int id = <color: red>listenerCurrentTable</color>.getSaleId();
+<color: red>pos</color>.printReceiptOfSale(id);
+}
+
+class PointOfSale {
+    + makeNewSale() : int 
+    + addLineItem(idSale : int)
+    + printReceipt(idSale)
+}
+
+class StatusPanel extends swing.JTextArea{
+}
+
+'swing.ActionListener -[hidden]down- TableListener
+'NewSaleListener -[hidden]down- ProductListener
+'ProductListener -[hidden]down- PrintReceiptListener
+'PrintReceiptListener -[hidden]down- PayListener
+'ActionListener -[hidden]right- PointOfSale
+'PointOfSale -[hidden]down- StatusPanel
+'TableListener -[hidden]down- AmountListener
+
+NewSaleListener ---> StatusPanel
+NewSaleListener ---> TableListener
+NewSaleListener ---> PointOfSale
+PayListener ---> AmountListener
+PayListener ---> TableListener
+PayListener ---> PointOfSale
+PayListener ---> StatusPanel
+PrintReceiptListener ---> TableListener
+PrintReceiptListener ---> PointOfSale
+PrintReceiptListener ---> StatusPanel
+ProductListener ---> TableListener
+ProductListener ---> PointOfSale
+ProductListener ---> StatusPanel
+TableListener ---> NewSaleListener
+TableListener ---> PayListener
+TableListener ---> PrintReceiptListener
+TableListener ---> StatusPanel
+
+
+@enduml
