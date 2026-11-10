@@ -5,8 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AmountListener implements ActionListener {
+
   private JTextField textField;
-  private double paidAmount;
 
   public AmountListener(JTextField textField) {
     this.textField = textField;
@@ -15,11 +15,23 @@ public class AmountListener implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent actionEvent) {
     System.out.println("Entered amount");
-    paidAmount = Double.parseDouble(textField.getText());
   }
 
   public double getPaidAmount() {
-    return paidAmount;
+
+    try {
+
+      String text = textField.getText();
+
+      text = text.replace("€", "");
+      text = text.trim();
+
+      return Double.parseDouble(text);
+
+    } catch (Exception e) {
+
+      return 0.0;
+    }
   }
 
   public void setText(String text) {

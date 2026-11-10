@@ -6,36 +6,65 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 class NewSaleListener implements ActionListener {
+
   private TableListener listenerCurrentTable;
   private PointOfSale pointOfSale;
+  private StatusPanel statusPanel;
 
-  public NewSaleListener(PointOfSale pointOfSale) {
+  public NewSaleListener(PointOfSale pointOfSale,
+                         StatusPanel statusPanel) {
+
     this.pointOfSale = pointOfSale;
+    this.statusPanel = statusPanel;
   }
 
   public void setListenerCurrentTable(TableListener actionListener) {
     listenerCurrentTable = actionListener;
-    // knows the id of its current sale, if any
   }
 
   @Override
   public void actionPerformed(ActionEvent actionEvent) {
-    System.out.println("Pressed New sale button");
-    if (listenerCurrentTable != null) {
-      if (listenerCurrentTable.hasASale()) {
-        int currentSaleId = listenerCurrentTable.getSaleId();
-        if (pointOfSale.isSalePaid(currentSaleId)) {
-          int saleId = pointOfSale.makeNewSale();
-          listenerCurrentTable.setSaleId(saleId);
-        } else {
-          System.out.println("Current sale of table "
-              + listenerCurrentTable.getTableId()
-              + " has not been paid yet");
-        }
-      } else {
+
+    if (listenerCurrentTable == null) {
+
+      statusPanel.refresh("Select a table first");
+      return;
+    }
+
+    if (listenerCurrentTable.hasASale()) {
+
+      int currentSaleId = listenerCurrentTable.getSaleId();
+
+      if (pointOfSale.isSalePaid(currentSaleId)) {
+
         int saleId = pointOfSale.makeNewSale();
+
         listenerCurrentTable.setSaleId(saleId);
+
+        statusPanel.setSale(String.valueOf(saleId));
+        statusPanel.setState("UNPAID");
+
+        statusPanel.refresh("New sale created");
+
+      } else {
+
+        statusPanel.setSale(String.valueOf(currentSaleId));
+        statusPanel.setState("UNPAID");
+
+        statusPanel.refresh(
+            "Current sale must be paid first");
       }
+
+    } else {
+
+      int saleId = pointOfSale.makeNewSale();
+
+      listenerCurrentTable.setSaleId(saleId);
+
+      statusPanel.setSale(String.valueOf(saleId));
+      statusPanel.setState("UNPAID");
+
+      statusPanel.refresh("New sale created");
     }
   }
 }

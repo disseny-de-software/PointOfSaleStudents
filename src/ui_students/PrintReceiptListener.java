@@ -6,28 +6,41 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PrintReceiptListener implements ActionListener {
+
   private TableListener listenerCurrentTable;
   private PointOfSale pointOfSale;
+  private StatusPanel statusPanel;
 
-  public PrintReceiptListener(PointOfSale pointOfSale) {
-    //this.mediator = mediator;
+  public PrintReceiptListener(PointOfSale pointOfSale,
+                              StatusPanel statusPanel) {
+
     this.pointOfSale = pointOfSale;
+    this.statusPanel = statusPanel;
   }
 
-  public void setListenerCurrentTable(TableListener actionListener) {
+  public void setListenerCurrentTable(
+      TableListener actionListener) {
+
     listenerCurrentTable = actionListener;
-    // knows the id of its current sale, if any
   }
 
   @Override
   public void actionPerformed(ActionEvent actionEvent) {
-    System.out.println("Pressed Receipt button");
+
     if (listenerCurrentTable != null) {
+
       if (listenerCurrentTable.hasASale()) {
+
         int id = listenerCurrentTable.getSaleId();
+
         pointOfSale.printReceiptOfSale(id);
+
+        statusPanel.refresh("Receipt printed");
+
       } else {
-        System.out.println("Table " + listenerCurrentTable.getTableId() + " has no sale yet");
+
+        statusPanel.refresh(
+            "Current table has no sale");
       }
     }
   }
