@@ -60,6 +60,14 @@ public class PointOfSale {
     return searchSaleById(saleId).isPaid();
   }
 
+  public boolean isAmountHandedEnough(int saleId, double amountHanded) {
+    return searchSaleById(saleId).isAmountHandedEnough(amountHanded);
+  }
+
+  public boolean saleHasProducts(int saleId) {
+    return searchSaleById(saleId).hasLineItems();
+  }
+
   // this is for the user interface
   public ArrayList<String> getProductNames() {
     return productCatalog.getProductNames();

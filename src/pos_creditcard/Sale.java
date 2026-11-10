@@ -62,11 +62,19 @@ public class Sale {
     System.out.printf("Total %.2f\n", total);
   }
 
+  public boolean isAmountHandedEnough(double amountHanded) {
+    return amountHanded >= total();
+  }
+
+  public boolean hasLineItems() {
+    return (saleLineItems != null) && (saleLineItems.size()>0);
+  }
+
   public void payCash(double amountHanded) {
     assert !isPaid : "sale " + id + " has already been paid";
     double totalSale = total();
     if (amountHanded >= totalSale) {
-      payment = new PaymentInCash(amountHanded, total());
+      payment = new PaymentInCash(amountHanded, totalSale);
       isPaid = true;
     } else {
       payment = null;
